@@ -64,7 +64,7 @@ class Autocomplete<T extends Object> extends StatelessWidget {
     this.displayStringForOption = RawAutocomplete.defaultStringForOption,
     this.fieldViewBuilder = _defaultFieldViewBuilder,
     this.onSelected,
-    this.optionsMaxHeight = 200.0,
+    this.optionsMaxHeight = 150.0,
     this.optionsViewBuilder,
     this.initialValue,
   });
@@ -116,14 +116,15 @@ class Autocomplete<T extends Object> extends StatelessWidget {
       fieldViewBuilder: fieldViewBuilder,
       initialValue: initialValue,
       optionsBuilder: optionsBuilder,
-      optionsViewBuilder: optionsViewBuilder ?? (BuildContext context, AutocompleteOnSelected<T> onSelected, Iterable<T> options) {
-        return _AutocompleteOptions<T>(
-          displayStringForOption: displayStringForOption,
-          onSelected: onSelected,
-          options: options,
-          maxOptionsHeight: optionsMaxHeight,
-        );
-      },
+      optionsViewBuilder: optionsViewBuilder ??
+          (BuildContext context, AutocompleteOnSelected<T> onSelected, Iterable<T> options) {
+            return _AutocompleteOptions<T>(
+              displayStringForOption: displayStringForOption,
+              onSelected: onSelected,
+              options: options,
+              maxOptionsHeight: optionsMaxHeight,
+            );
+          },
       onSelected: onSelected,
     );
   }
@@ -190,21 +191,19 @@ class _AutocompleteOptions<T extends Object> extends StatelessWidget {
                 onTap: () {
                   onSelected(option);
                 },
-                child: Builder(
-                  builder: (BuildContext context) {
-                    final bool highlight = AutocompleteHighlightedOption.of(context) == index;
-                    if (highlight) {
-                      SchedulerBinding.instance.addPostFrameCallback((Duration timeStamp) {
-                        Scrollable.ensureVisible(context, alignment: 0.5);
-                      });
-                    }
-                    return Container(
-                      color: highlight ? Theme.of(context).focusColor : null,
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(displayStringForOption(option)),
-                    );
+                child: Builder(builder: (BuildContext context) {
+                  final bool highlight = AutocompleteHighlightedOption.of(context) == index;
+                  if (highlight) {
+                    SchedulerBinding.instance.addPostFrameCallback((Duration timeStamp) {
+                      Scrollable.ensureVisible(context, alignment: 0.5);
+                    });
                   }
-                ),
+                  return Container(
+                    color: highlight ? Theme.of(context).focusColor : null,
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(displayStringForOption(option)),
+                  );
+                }),
               );
             },
           ),
